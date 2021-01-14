@@ -1772,7 +1772,18 @@ void del_elbox_client(uint32_t id)
 		}
 	}
 }
-	
+
+elbox_client *find_elbox_client(uint32_t id)
+{
+	for (int i = 0; i < MAX_ELBOX_CLIENTS; i++) {
+		elbox_client &cl = elbox_clients[i];
+			
+		if (cl.present && cl.id == id)
+			return &cl;
+	}
+	return nullptr;
+}
+
 ui::messages electrobox_ui(uint32_t client)
 {
 	//add_elbox_client(client);

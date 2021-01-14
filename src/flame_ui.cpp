@@ -144,7 +144,7 @@ namespace ui
 		return buffer.substring(begin, end);
 	}
 
-	void messages::parse()
+	void messages::parse(uint32_t sender)
 	{
 		begin = end = 0;
 		String msg;
@@ -160,7 +160,7 @@ namespace ui
 			e = (element*)STR_TO_PTR(msg);
 			switch (e->type) {
 			case E_BUTTON:
-				e->button(e);
+				e->button(e, sender);
 				break;
 				
 			case E_FIELD:
@@ -232,7 +232,7 @@ namespace ui
 			in.buffer.reserve(len + 1);
 			for (size_t i = 0; i < len; i++)
 				in.buffer += (char)data[i];
-			in.parse();
+			in.parse(client->id());
 			break;
 		}
 		default:

@@ -37,6 +37,8 @@ struct elbox_client {
 	elbox_client();
 } extern elbox_clients[MAX_ELBOX_CLIENTS];
 
+elbox_client *find_elbox_client(uint32_t id);
+
 enum language {
 	LANG_UA,
 	LANG_RU,

@@ -48,7 +48,7 @@ namespace ui {
 		element_type type;
 		
 		union {
-			void (*button)(void *id);
+			void (*button)(void *id, uint32_t sender);
 			void (*field)(void *id, String value);
 			void (*range)(void *id, int value);
 			void (*time)(time_t t);
@@ -72,7 +72,7 @@ namespace ui {
 		messages& operator << (float);
 		
 		String next();
-		void parse();
+		void parse(uint32_t);
 		void send();
 		void flush();
 		void flush(uint32_t);
