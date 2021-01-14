@@ -1848,7 +1848,7 @@ void factory_init(bool reset = false)
 		for (int row = 0; row < 7; row++) {
 			begin[row].hours = 23;
 			begin[row].minutes = 0;
-			end[row].hours = 8;
+			end[row].hours = 7;
 			end[row].minutes = 0;
 			
 			switchers[row].enabled = false;
