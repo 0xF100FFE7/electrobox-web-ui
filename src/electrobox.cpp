@@ -394,12 +394,12 @@ namespace sync_time {
 		return (ui::messages("type:") << ui::GET_TIME << ":id:" << &browser_time << ":"); 
 	}
 	
-	void sync_now_callback()
+	void sync_now_callback(button &id, uint32_t sender)
 	{
 		time_request().flush(); //send time request
 	}
 	
-	void sync_on_connect_callback(switcher &id)
+	void sync_on_connect_callback(switcher &id, uint32_t sender)
 	{
 		id.turn(on_connect).flush();	
 		need_commit = true;
@@ -504,14 +504,14 @@ namespace date_time {
 
 namespace language_selector {
 	struct radio : ::radio {
-		static void callback(radio&);
+		static void callback(radio&, uint32_t);
 		radio() : ::radio((void *)callback) {};
 	};
 	
 	box widget;
 	radio language_radio[NUMBER_OF_SUPPORTED_LANGUAGES];
 	
-	void radio::callback(radio &id) {
+	void radio::callback(radio &id, uint32_t sender) {
 		language new_language = (language)(&id - language_radio);
 		if (current_language != new_language) {
 			current_language = new_language;
@@ -678,14 +678,14 @@ namespace charge_log {
 
 namespace clear_log {
 	struct button : ::button {
-		static void callback();
+		static void callback(button &, uint32_t);
 		button() : ::button((void *)callback) {};
 	};
 	
 	box widget;
 	button button;
 	
-	void button::callback()
+	void button::callback(button &id, uint32_t sender)
 	{
 		charge_log::clear();
 	}
@@ -769,7 +769,7 @@ namespace charge_switch {
 	bool enabled = false;
 	
 	struct switcher : ::switcher {
-		static void callback(switcher&);
+		static void callback(switcher&, uint32_t);
 		switcher() : ::switcher((void *)callback) {};
 	};
 	
@@ -784,7 +784,7 @@ namespace charge_switch {
 		}
 	}
 	
-	void switcher::callback(switcher &id)
+	void switcher::callback(switcher &id, uint32_t sender)
 	{
 		id.turn(enabled).flush();
 		
@@ -842,7 +842,7 @@ namespace weekly_schedule {
 	struct switcher : ::switcher {
 		bool enabled = false;
 		
-		static void callback(switcher&);
+		static void callback(switcher&, uint32_t);
 		switcher() : ::switcher((void *)callback) {};
 	};
 	
@@ -865,7 +865,7 @@ namespace weekly_schedule {
 		need_commit = true;
 	}
 
-	void switcher::callback(switcher &id)
+	void switcher::callback(switcher &id, uint32_t sender)
 	{
 		id.turn(id.enabled).flush();
 		
@@ -1064,14 +1064,14 @@ namespace ground_check {
 	bool enabled = true;
 	
 	struct switcher : ::switcher {
-		static void callback(switcher&);
+		static void callback(switcher&, uint32_t);
 		switcher() : ::switcher((void *)callback) {};
 	};
 	
 	box widget;
 	switcher switcher;
 	
-	void switcher::callback(switcher &id)
+	void switcher::callback(switcher &id, uint32_t sender)
 	{
 		id.turn(enabled).flush();
 		
@@ -1100,14 +1100,14 @@ namespace adaptive_mode {
 	bool enabled;
 		
 	struct switcher : ::switcher {
-		static void callback(switcher&);
+		static void callback(switcher&, uint32_t);
 		switcher() : ::switcher((void *)callback) {};
 	};
 	
 	box widget;
 	switcher switcher;
 	
-	void switcher::callback(switcher &id)
+	void switcher::callback(switcher &id, uint32_t sender)
 	{
 		id.turn(enabled).flush();
 		
@@ -1137,7 +1137,7 @@ namespace limit_kwt_for_session {
 	int value;
 	
 	struct switcher : ::switcher {
-		static void callback(switcher&);
+		static void callback(switcher&, uint32_t);
 		switcher() : ::switcher((void *)callback) {};
 	};
 	
@@ -1150,7 +1150,7 @@ namespace limit_kwt_for_session {
 	switcher switcher;
 	range range;
 	
-	void switcher::callback(switcher &id)
+	void switcher::callback(switcher &id, uint32_t sender)
 	{
 		id.turn(enabled).flush();
 		
@@ -1190,7 +1190,7 @@ namespace limit_by_time {
 	int value;
 	
 	struct switcher : ::switcher {
-		static void callback(switcher&);
+		static void callback(switcher&, uint32_t);
 		switcher() : ::switcher((void *)callback) {};
 	};
 	
@@ -1203,7 +1203,7 @@ namespace limit_by_time {
 	switcher switcher;
 	range range;
 	
-	void switcher::callback(switcher &id)
+	void switcher::callback(switcher &id, uint32_t sender)
 	{
 		id.turn(enabled).flush();
 		
@@ -1243,7 +1243,7 @@ namespace display_off_time {
 	int value;
 	
 	struct switcher : ::switcher {
-		static void callback(switcher&);
+		static void callback(switcher&, uint32_t);
 		switcher() : ::switcher((void *)callback) {};
 	};
 	
@@ -1256,7 +1256,7 @@ namespace display_off_time {
 	switcher switcher;
 	range range;
 	
-	void switcher::callback(switcher &id)
+	void switcher::callback(switcher &id, uint32_t sender)
 	{
 		id.turn(enabled).flush();
 		
@@ -1293,14 +1293,14 @@ namespace display_off_time {
 
 namespace schedule_enabler {
 	struct switcher : ::switcher {
-		static void callback(switcher&);
+		static void callback(switcher&, uint32_t);
 		switcher() : ::switcher((void *)callback) {};
 	};
 	
 	box widget;
 	switcher switcher;
 	
-	void switcher::callback(switcher &id)
+	void switcher::callback(switcher &id, uint32_t sender)
 	{
 		id.turn(weekly_schedule::enabled).flush();
 		
@@ -1361,13 +1361,13 @@ namespace network_settings {
 	};
 	
 	struct switcher : ::switcher {
-		static void callback(switcher&);
+		static void callback(switcher&, uint32_t);
 		switcher() : ::switcher((void *)callback) {};
 	};
 	
 	struct button : ::button {
 		bool enabled = false;
-		static void callback();
+		static void callback(button&, uint32_t);
 		button() : ::button((void *)callback) {};
 	};
 	
@@ -1520,7 +1520,7 @@ namespace network_settings {
 		return "";
 	}
 	
-	void button::callback()
+	void button::callback(button &id, uint32_t sender)
 	{
 		if (!applier.enabled) return;
 		applier.enabled = false;
@@ -1529,7 +1529,7 @@ namespace network_settings {
 		network::end(); //no need to flush since network reloads
 	}
 	
-	void switcher::callback(switcher &id)
+	void switcher::callback(switcher &id, uint32_t sender)
 	{
 		applier_enable();
 		id.turn(sta_enabled).flush();
@@ -1628,7 +1628,7 @@ namespace statistics {
 		need_commit = true;
 	}
 	
-	void reset_callback()
+	void reset_callback(button& id, uint32_t sender)
 	{
 		time_t t = now();
 		for (int i = 0; i < 5; i++) {
