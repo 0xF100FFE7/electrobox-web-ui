@@ -5,6 +5,7 @@
 
 #include "Arduino.h"
 
+#include <DNSServer.h>
 #include <TimeLib.h>
 #include <ESPAsyncTCP.h>
 
@@ -112,6 +113,8 @@ namespace ui {
 	extern const char* basicAuthUsername;
 	extern const char* basicAuthPassword;
 	extern bool basicAuth;
+	
+	extern DNSServer dns_server;
 	extern AsyncWebServer* server;
 	extern AsyncWebSocket* ws;
 	

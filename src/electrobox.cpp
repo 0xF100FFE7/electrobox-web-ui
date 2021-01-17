@@ -353,7 +353,7 @@ enum flash_variable {
 	FV_SYNC_TIME_ON_CONNECT = FV_STATS_RANGES + sizeof(statistics::kwt_range) * 5,
 	
 	FV_SIZE = FV_SYNC_TIME_ON_CONNECT + sizeof(bool),
-	FV_VERSION = 72  //Set new value all the time if you want to reset flash memory
+	FV_VERSION = 74  //Set new value all the time if you want to reset flash memory
 };
 
 uint64_t flash_header_magic = 0x1337C0DE154AD0BE + FV_VERSION;
@@ -2103,5 +2103,6 @@ void electrobox_ui_update()
 		//connect_millis += 250;
 	}
 	
+	ui::dns_server.processNextRequest();
 	//ArduinoOTA.handle();
 }

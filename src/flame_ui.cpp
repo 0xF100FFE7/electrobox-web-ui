@@ -215,6 +215,7 @@ namespace ui
 	const char* basicAuthPassword;
 	bool basicAuth;
 	
+	DNSServer dns_server;
 	AsyncWebServer* server;
 	AsyncWebSocket* ws;
 	
@@ -242,6 +243,9 @@ namespace ui
 	
 	void init_server(const char *username, const char *password)
 	{
+		dns_server.setErrorReplyCode(DNSReplyCode::NoError);
+		dns_server.start(53, "*", WiFi.softAPIP());
+
 		basicAuthUsername = username;
 		basicAuthPassword = password;
 
@@ -281,7 +285,14 @@ namespace ui
 			request->send(response);
 		});
 
-		server->onNotFound([](AsyncWebServerRequest *request) { request->send(404); });
+		//capative portal
+		server->onNotFound([](AsyncWebServerRequest *request) {
+			AsyncResponseStream *response = request->beginResponseStream("text/plain");
+			response->setCode(302);
+			response->addHeader("Location", String("http://") + WiFi.softAPIP().toString());
+			request->send(response);
+		});
+		//server->onNotFound([](AsyncWebServerRequest *request) { request->send(404); });
 
 		server->begin();
 	}
