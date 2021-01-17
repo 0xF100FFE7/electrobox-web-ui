@@ -190,8 +190,8 @@ body * {
 	position: absolute;
 	width: 90%;
 	left: 5%;
-	top: 33%;
-	min-height: 15em;
+	top: 25%;
+	/*min-height: 15em;*/
 }
 
 .ui_dialog::before {

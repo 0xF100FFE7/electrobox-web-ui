@@ -174,6 +174,9 @@ function set_generic_web_attributes(web_element, attributes)
 			break;	
 			
 		case "display": //Відображати, чи ні.
+			if (web_element.className == "ui_dialog") //костиль
+				web_element = get_web_element(web_element.id + "_background");
+				
 			if (value == "false") web_element.style.display = "none";
 			else web_element.style.display = "flex";
 			break;

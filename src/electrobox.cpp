@@ -296,9 +296,9 @@ void save_settings(); //save all settings
 language current_language;
 
 const char* languages[NUMBER_OF_SUPPORTED_LANGUAGES][LANGUAGE_ITEMS] PROGMEM = {
-	{"Головна", "Налаштування", "Вибір мови", "Українська", "Встановити дату та час", "Рік", "Години", "Місяць", "Хвилини", "День", "Секунди", "Тижневий розклад", "Дні тижня", "Старт зарядки", "Стоп зарядки", "Увімкнути", "Понеділок", "Вівторок", "Середа", "Четвер", "П'ятниця", "Субота", "Неділя", "Статус зарядки", "Пістолет не вставлено", "Триває зарядка", "Автомобіль заряджено", "Перевірте заземлення", "Спрацював захист ПЗВ", "Спрацював захист по напрузі (більше 270V)", "Спрацював захист по току (більше 50А)", "Очікує зарядки по розкладу", "кВт", "Час та кВт за сесію", "Напруга, струм та потужність", "Регулювання струму", "Перевірка заземлення", "Заряджати по розкладу", "Адаптивний режим", "Обмежити кількість кВт за сесію", "Таймери", "Регулювання яскравості дисплею", "Обмежити тривалість заряду в годинах", "Час до вимкнення дисплею в хвилинах", "Статистика", "Лог змін статусу", "Ввімкнути зарядку", "Синхронізувати час з браузерним", "Очистка логу", "Скинути налаштування", "Налаштування мережі", "Зберегти зміни", "Точка доступу", "Станція", "SSID\\:", "Пароль\\:", "IP адрес\\:", "Шлюз\\:", "Маска підмережі\\:", "Ввімкнена\\:", "SSID\\:", "Пароль\\:", "Статичний IP адрес\\:", "Шлюз\\:", "Маска підмережі\\:", "Статистика за період", "За минулу(ий)", "За теперішню(ній)", "Годину\\:", "День\\:", "Тиждень\\:", "Місяць\\:", "Рік\\:", "За весь час\\:", "Рахувати з теперешнього моменту", "Споживано за сесію", "Зараз", "При підключенні\\:"},
-	{"Главная", "Настройки", "Выбор языка", "Русский", "Установить дату и время", "Год", "Часы", "Месяц", "Минуты", "День", "Секунды", "Еженедельное расписание", "Дни недели", "Старт заряда", "Стоп зарада", "Включить", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье", "Статус зарядки", "Пистолет не вставлен", "Продолжается зарядка", "Автомобиль заряжен", "Проверьте заземление", "Сработала защита УЗО", "Сработала защита по напряжению (более 270V)", "Сработала защита по току (более 50A)", "Ожидание зарядки по расписанию", "кВт", "Время и кВт за сессию", "Напряжение ток и мощность", "Регулировка тока", "Проверка заземления", "Заряжать по расписанию", "Адаптивний режим", "Ограничить кол-во кВт за сессию", "Таймеры", "Регулировка яркости дисплея", "Ограничить время заряда в часах", "Время до отключения дисплея в минутах", "Статистика", "Лог смен статуса", "Включить зарядку", "Синхронизировать время с браузерным", "Очистить лог", "Сбросить настройки", "Настройки сети", "Сохраниить изменения", "Точка доступа", "Станция", "SSID\\:", "Пароль\\:", "IP адрес\\:", "Шлюз\\:", "Маска подсети\\:", "Включена\\:", "SSID\\:", "Пароль\\:", "Статический IP адрес\\:", "Шлюз\\:", "Маска подсети\\:", "Статистика за период", "За предыдущий(ую))", "За Текущий(ую)", "Час\\:", "День\\:", "Неделю\\:", "Месяц\\:", "Год\\:", "За всё время\\:", "Считать с текущего момента", "Употреблено за сессию", "Сейчас", "При подключении\\:"},
-	{"Home", "Settings", "Select language", "English", "Setup date and time", "Year", "Hours", "Month", "Minutes", "Day", "Seconds", "Weekly sсhedule", "Days of the week", "Start charging", "Stop charging", "Enable", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday", "Charger status", "Pistol not inserted", "Charging continues", "Vehicle is charged", "Check ground", "RCD protection blocking", "Voltage protection blocking (above 270V)", "Current protection blocking (above 50A)", "Waiting for charging by chedule", "kWt", "Time and kWt for session", "Voltage, current and kWt", "Current regulator", "Ground check", "Charge by schedule", "Adaptive mode", "Limit kWt for session", "Timers", "Display brightness regulator", "Limit charge time by hours", "Time to turn off the display in minutes", "Statistics", "Status change log", "Enable charger", "Synchronize time with browser time", "Clear log", "Factory reset", "Network settings", "Save settings", "Access point", "Station", "SSID\\:", "Password\\:", "IP\\:", "Gate\\:", "Subnet mask\\:", "Enabled\\:", "SSID\\:", "Password\\:", "Static ip\\:", "Gate\\:", "Subnet mask\\:", "Statistics for a period", "Previous", "Current", "Hour\\:", "Day\\:", "Week\\:", "Month\\:", "Year\\:", "For all time\\:", "Count from current time", "Consumed for session", "Now", "On connect\\:"},
+	{"Головна", "Налаштування", "Вибір мови", "Українська", "Встановити дату та час", "Рік", "Години", "Місяць", "Хвилини", "День", "Секунди", "Тижневий розклад", "Дні тижня", "Старт зарядки", "Стоп зарядки", "Увімкнути", "Понеділок", "Вівторок", "Середа", "Четвер", "П'ятниця", "Субота", "Неділя", "Статус зарядки", "Пістолет не вставлено", "Триває зарядка", "Автомобіль заряджено", "Перевірте заземлення", "Спрацював захист ПЗВ", "Спрацював захист по напрузі (більше 270V)", "Спрацював захист по току (більше 50А)", "Очікує зарядки по розкладу", "кВт", "Час та кВт за сесію", "Напруга, струм та потужність", "Регулювання струму", "Перевірка заземлення", "Заряджати по розкладу", "Адаптивний режим", "Обмежити кількість кВт за сесію", "Таймери", "Регулювання яскравості дисплею", "Обмежити тривалість заряду в годинах", "Час до вимкнення дисплею в хвилинах", "Статистика", "Лог змін статусу", "Ввімкнути зарядку", "Синхронізувати час з браузерним", "Очистка логу", "Скинути налаштування", "Налаштування мережі", "Зберегти зміни", "Точка доступу", "Станція", "SSID\\:", "Пароль\\:", "IP адрес\\:", "Шлюз\\:", "Маска підмережі\\:", "Ввімкнена\\:", "SSID\\:", "Пароль\\:", "Статичний IP адрес\\:", "Шлюз\\:", "Маска підмережі\\:", "Статистика за період", "За минулу(ий)", "За теперішню(ній)", "Годину\\:", "День\\:", "Тиждень\\:", "Місяць\\:", "Рік\\:", "За весь час\\:", "Рахувати з теперешнього моменту", "Споживано за сесію", "Зараз", "При підключенні\\:", "Ви дійсно хочете скинути налаштування?", "Так", "Ні"},
+	{"Главная", "Настройки", "Выбор языка", "Русский", "Установить дату и время", "Год", "Часы", "Месяц", "Минуты", "День", "Секунды", "Еженедельное расписание", "Дни недели", "Старт заряда", "Стоп зарада", "Включить", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье", "Статус зарядки", "Пистолет не вставлен", "Продолжается зарядка", "Автомобиль заряжен", "Проверьте заземление", "Сработала защита УЗО", "Сработала защита по напряжению (более 270V)", "Сработала защита по току (более 50A)", "Ожидание зарядки по расписанию", "кВт", "Время и кВт за сессию", "Напряжение ток и мощность", "Регулировка тока", "Проверка заземления", "Заряжать по расписанию", "Адаптивний режим", "Ограничить кол-во кВт за сессию", "Таймеры", "Регулировка яркости дисплея", "Ограничить время заряда в часах", "Время до отключения дисплея в минутах", "Статистика", "Лог смен статуса", "Включить зарядку", "Синхронизировать время с браузерным", "Очистить лог", "Сбросить настройки", "Настройки сети", "Сохраниить изменения", "Точка доступа", "Станция", "SSID\\:", "Пароль\\:", "IP адрес\\:", "Шлюз\\:", "Маска подсети\\:", "Включена\\:", "SSID\\:", "Пароль\\:", "Статический IP адрес\\:", "Шлюз\\:", "Маска подсети\\:", "Статистика за период", "За предыдущий(ую))", "За Текущий(ую)", "Час\\:", "День\\:", "Неделю\\:", "Месяц\\:", "Год\\:", "За всё время\\:", "Считать с текущего момента", "Употреблено за сессию", "Сейчас", "При подключении\\:", "Вы действительно хотите сбросить настройки?", "Да", "Нет"},
+	{"Home", "Settings", "Select language", "English", "Setup date and time", "Year", "Hours", "Month", "Minutes", "Day", "Seconds", "Weekly sсhedule", "Days of the week", "Start charging", "Stop charging", "Enable", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday", "Charger status", "Pistol not inserted", "Charging continues", "Vehicle is charged", "Check ground", "RCD protection blocking", "Voltage protection blocking (above 270V)", "Current protection blocking (above 50A)", "Waiting for charging by chedule", "kWt", "Time and kWt for session", "Voltage, current and kWt", "Current regulator", "Ground check", "Charge by schedule", "Adaptive mode", "Limit kWt for session", "Timers", "Display brightness regulator", "Limit charge time by hours", "Time to turn off the display in minutes", "Statistics", "Status change log", "Enable charger", "Synchronize time with browser time", "Clear log", "Factory reset", "Network settings", "Save settings", "Access point", "Station", "SSID\\:", "Password\\:", "IP\\:", "Gate\\:", "Subnet mask\\:", "Enabled\\:", "SSID\\:", "Password\\:", "Static ip\\:", "Gate\\:", "Subnet mask\\:", "Statistics for a period", "Previous", "Current", "Hour\\:", "Day\\:", "Week\\:", "Month\\:", "Year\\:", "For all time\\:", "Count from current time", "Consumed for session", "Now", "On connect\\:", "Do you really want to reset?", "Yes", "No"},
 };
 
 //Localized string
@@ -353,7 +353,7 @@ enum flash_variable {
 	FV_SYNC_TIME_ON_CONNECT = FV_STATS_RANGES + sizeof(statistics::kwt_range) * 5,
 	
 	FV_SIZE = FV_SYNC_TIME_ON_CONNECT + sizeof(bool),
-	FV_VERSION = 69  //Set new value all the time if you want to reset flash memory
+	FV_VERSION = 72  //Set new value all the time if you want to reset flash memory
 };
 
 uint64_t flash_header_magic = 0x1337C0DE154AD0BE + FV_VERSION;
@@ -701,45 +701,49 @@ namespace clear_log {
 namespace factory_reset {
 	struct button : ::button {
 		bool enabled = false;
-		static void callback();
+		static void callback(button &, uint32_t);
 		button() : ::button((void *)callback) {};
 	};
 	
 	box widget;
 	button applier;
 	
-	/*dialog are_you_sure;
+	dialog are_you_sure;
 	box wrapper;
 	
-	dialog_pressed_yes()
+	void yes_callback(button &id, uint32_t sender)
 	{
 		if (!applier.enabled) return;	
-		applier.enabled = false;
-		
+			applier.enabled = false;
+		((ui::messages)":id:" << &are_you_sure << ":display:false:").flush(sender);
 		factory_init(true); //set reset
 		
 		tab_navigation::selected = &tab_navigation::settings;
 		rebuild_electrobox_ui();
 	}
 	
-	dialog_pressed_no()
+	void no_callback(button &id, uint32_t sender)
 	{
-		":id:" << &widget << ":parent:" << &tab_navigation::settings << ":dir:h:text:"
+		//":id:" << &widget << ":parent:" << &tab_navigation::settings << ":dir:h:text:"
+		((ui::messages)":id:" << &are_you_sure << ":display:false:").flush(sender);
 	}
 	
-	button yes(dialog_pressed_yes), no(dialog_pressed_no);
-	*/
+	::button yes((void *)yes_callback);
+	::button no((void *)no_callback);
 	
-	void button::callback()
+	void button::callback(button &id, uint32_t sender)
 	{
+		//elbox_client &cl = *find_elbox_client(sender);
+		((ui::messages)":id:" << &are_you_sure << ":display:true:").flush(sender);
+		
 		//TODO we need to run dialog window here!!	
-		if (!applier.enabled) return;	
+		/*if (!applier.enabled) return;	
 		applier.enabled = false;
 		
 		factory_init(true); //set reset
 		
 		tab_navigation::selected = &tab_navigation::settings;
-		rebuild_electrobox_ui();
+		rebuild_electrobox_ui();*/
 	}
 	
 	void applier_enable()
@@ -752,7 +756,12 @@ namespace factory_reset {
 	{
 		client->messages
 			<< "type:" << ui::E_BOX << ":id:" << &widget << ":parent:" << &tab_navigation::settings << ":dir:h:text:" << l_str(FACTORY_RESET_TITLE) << ":"
-			<< "type:" << ui::E_BUTTON << ":id:" << &applier << ":parent:" << &widget << ":backcolor:orange:disabled:" << (applier.enabled ? "false:" : "true:");
+			<< "type:" << ui::E_BUTTON << ":id:" << &applier << ":parent:" << &widget << ":backcolor:orange:disabled:" << (applier.enabled ? "false:" : "true:")
+			
+			<< "type:" << ui::E_DIALOG << ":id:" << &are_you_sure << ":parent:main:display:false:"
+			<< "type:" << ui::E_BOX << ":id:" << &wrapper << ":parent:" << &are_you_sure << ":dir:h:text:" << l_str(ARE_YOU_SURE_RESET) << ":"
+			<< "type:" << ui::E_BUTTON << ":id:" << &yes << ":parent:" << &wrapper << ":text:" << l_str(RESET_YES) << ":"
+			<< "type:" << ui::E_BUTTON << ":id:" << &no << ":parent:" << &wrapper << ":text:" << l_str(RESET_NO) << ":";
 	}
 }
 
@@ -1894,10 +1903,12 @@ void factory_init(bool reset = false)
 	network::sta_subnet = IPAddress(255, 255, 255, 0);
 
 	LittleFS.format();
-	if (!reset)
+	if (!reset) {
 		EEPROM.put(FV_HEADER_MAGIC, flash_header_magic);
-	else
+	} else {
+		network_settings::applied = true;
 		save_settings();
+	}
 	
 	charge_log::load();
 }
