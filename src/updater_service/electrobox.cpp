@@ -18,69 +18,6 @@
 
 //todo move localization to javascript
 
-
-namespace network {	
-	uint8_t mac_addr[6] = {0x0, 0x0, 0x0, 0x0, 0x0, 0x0};
-	
-	char ap_ssid[40];
-	char ap_pass[40];
-	IPAddress ap_ip;
-	IPAddress ap_gateway;
-	IPAddress ap_subnet;
-
-	char sta_ssid[40];
-	char sta_pass[40];
-	IPAddress sta_ip;
-	IPAddress sta_gateway;
-	IPAddress sta_subnet;
-
-	bool sta_connected = false;
-
-	bool is_valid_mac(uint8_t *mac)
-	{
-		for (int i = 0; i < 6; i++)
-			if (mac[i] == 255)
-				return false;
-		return true;
-	}
-	
-	void connect_sta()
-	{
-		/*if (is_valid_mac(mac_addr))
-			wifi_set_macaddr(SOFTAP_IF, &mac_addr[0]);*/
-		WiFi.config(sta_ip, sta_gateway, sta_subnet);
-		WiFi.begin(sta_ssid, sta_pass);
-	}
-	
-	void connect_ap()
-	{
-		WiFi.softAPConfig(ap_ip, ap_gateway, ap_subnet);
-		WiFi.softAP(ap_ssid, ap_pass);
-		/*if (!is_valid_mac(mac_addr))
-			WiFi.softAPmacAddress(mac_addr);*/
-	}
-	
-	void begin(bool sta_enabled)
-	{
-		//WiFi.persistent(false);
-		WiFi.mode(sta_enabled ? WIFI_AP_STA : WIFI_AP);
-		//WiFi.mode(WIFI_AP);
-		connect_ap();
-		if (sta_enabled)
-			connect_sta();
-	};
-	
-	void end()
-	{
-		WiFi.softAPdisconnect();
-		WiFi.disconnect();
-	}
-}
-
-
-
-
-
 //User specified ui helpers(wrappers)
 String hours_and_minutes_to_str(int hours, int minutes) {
 	return (hours < 10 ? String("0") + hours : String(hours)) + "\\:" + (minutes < 10 ? String("0") + minutes : String(minutes));
@@ -310,6 +247,95 @@ const char* l_str(unsigned i)
 
 
 
+struct sstatistics {
+	int time_elapsed_for_session = 0;
+	double kwt_for_session = 0.0;
+	
+	double total_kwt;
+
+	statistics::kwt_range ranges[5] = {
+		{0, 60 * 60, 0, 0}, //hour
+		{0, 60 * 60 * 24, 0, 0}, //day
+		{0, 60 * 60 * 24 * 7, 0, 0}, //week
+		{0, 60 * 60 * 24 * 7 * 4, 0, 0}, //month
+		{0, 60 * 60 * 24 * 7 * 4 * 12, 0, 0}, //year
+	};
+};
+
+struct day_schedule {
+	int begin = 2300; //23:00
+	int end = 700; //07:00
+	bool enabled = false;
+};
+
+struct sweekly_schedule {
+	bool enabled = false;
+	day_schedule days[7];
+};
+
+struct settings {
+	uint64_t version;
+	
+	language slanguage;
+	sweekly_schedule ssweekly_schedule;
+	sstatistics ssstatistics;
+	
+	bool sync_time_on_connect;
+	
+	int scurrent_regulator;
+	bool sground_check;
+	bool sadaptive_mode;
+	bool kwt_limit_enabled;
+	int kwt_limit;
+	
+	bool time_limit_enabled;
+	int time_limit;
+	
+	bool display_off_enabled;
+	int sdisplay_off_time;
+	int display_brightness;
+	
+	char ap_ssid[80];
+	uint32_t ap_ip;
+	uint32_t ap_gateway;
+	uint32_t ap_subnet;
+		
+	char sta_ssid[80];
+	uint32_t sta_ip;
+	uint32_t sta_gateway;
+	uint32_t sta_subnet;
+	
+	void defaults() {
+		version = 75;
+		
+		slanguage = LANG_UA;
+		
+		sync_time_on_connect = false;
+		
+		scurrent_regulator = 6;
+		sground_check = false;
+		sadaptive_mode = false;
+		kwt_limit_enabled = false;
+		kwt_limit = 0;
+		
+		time_limit_enabled = false;
+		time_limit = 0;
+		
+		display_off_enabled = false;
+		sdisplay_off_time = 10;
+		display_brightness = 100;
+		
+		ap_ssid[0] = '\0';
+		ap_ip = IPAddress(7, 7, 7, 7);
+		ap_gateway = IPAddress(7, 7, 7, 7);
+		ap_subnet = IPAddress(255, 255, 255, 0);
+		
+		sta_ssid[0] = '\0';
+		sta_ip = IPAddress(192, 168, 1, 227);
+		sta_gateway = IPAddress(192, 168, 1, 1);
+		sta_subnet = IPAddress(255, 255, 255, 0);
+	}
+} settings;
 
 //all variables and arrays that will be stored in flash memory
 //TODO make struct of this shit
@@ -2006,12 +2032,6 @@ void electrobox_ui_setup()
 void electrobox_ui_update()
 {
 	static unsigned long old_millis = 0;
-
-	static int sta_connection_attempts = 5; //maximum 5 seconds to connect to sta, then stop.
-	static bool sta_connecting = true;
-	
-	static int sta_reconnect_timeout = 60; //repeat reconnect only after 60 seconds 
-	static bool sta_lost_connection = false;
 	
 	static int statistics_update_interval = 60 * 5; //every 5 minutes
 	
@@ -2036,54 +2056,6 @@ void electrobox_ui_update()
 		if (need_commit) {
 			factory_reset::applier_enable();
 			save_settings();
-		}
-		
-		//old connection check
-		/*if (!sta_connect_time && sta_startup)
-		{
-			if (WiFi.status() != WL_CONNECTED) {
-				WiFi.persistent(false);
-				WiFi.disconnect();
-				WiFi.persistent(true);
-			}
-			sta_startup = false;
-		} else {
-			sta_connect_time--;
-		}*/
-		
-		//new connection check
-		if (WiFi.getMode() == WIFI_AP_STA) {
-			if (!sta_lost_connection) {
-				if (WiFi.status() != WL_CONNECTED && sta_connecting) {
-					if (sta_connection_attempts <= 0) { //if we can't connect then sta is lost connection
-						DEBUG_MSG("Connection to sta is lost\n", sta_connection_attempts);
-						WiFi.persistent(false);
-						WiFi.disconnect(); //quit ESP sta reconnect limbo
-						WiFi.persistent(true);
-						sta_connection_attempts = 5;
-						sta_reconnect_timeout = 60;
-						network::sta_connected = false;
-						sta_lost_connection = true;
-						sta_connecting = false;
-					} else {
-						DEBUG_MSG("Connecting to sta (%i)...\n", sta_connection_attempts);
-						sta_connection_attempts--;
-					}
-				}
-			} else { //if we lost connection then wait timeout, and then try connect again
-				if (sta_reconnect_timeout <= 0) {
-					DEBUG_MSG("Sta been disconnected too long, reconnecting...\n");
-					sta_connecting = true;
-					sta_lost_connection = false; //connection is not lost if we're connecting
-					WiFi.begin();
-				} else {
-					if (!(sta_reconnect_timeout % 10))
-						DEBUG_MSG("Timeout to reconnect sta: %i...\n", sta_reconnect_timeout--);
-					sta_reconnect_timeout--;
-				}
-			}
-		} else {
-			network::sta_connected = true;
 		}
 		
 		weekly_schedule::trigger();

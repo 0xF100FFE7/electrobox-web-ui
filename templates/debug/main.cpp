@@ -1001,6 +1001,7 @@ int main()
 	cout << endl;
 }*/
 
+/*
 #define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 #include <stdlib.h>
@@ -1096,4 +1097,457 @@ int main()
 	}
 		
 	return 0;
+}
+*/
+#include <iostream>
+#include <string>
+	
+using namespace std;
+
+namespace ui {
+	struct attributes {
+		string buffer;
+		
+		attributes& operator , (attributes b)
+		{
+			this->buffer += b.buffer;
+			return *this;
+		}
+		
+		attributes(string buf = "")
+		{
+			buffer = buf;
+		}
+	} none;
+	
+	namespace attr {
+		enum e_dir {
+			DIR_H, DIR_HORIZONTAL = 0,
+			DIR_V, DIR_VERTICAL = 1
+		};
+
+		enum e_align {
+			ALIGN_UP, ALIGN_LEFT = 0,
+			ALIGN_DOWN, ALIGN_RIGHT = 1,
+			ALIGN_CENTER
+		};
+		
+		struct panel_t {
+			attributes operator = (string b)
+			{
+				return string("panel:") + b + ":";
+			}
+		} panel;
+		
+		struct selected_t {
+			attributes operator = (bool b)
+			{
+				return string("selected:") + (b ? "true:" : "false:");
+			}
+		} selected;
+		
+		struct tab_align_t {
+			attributes operator = (e_align b)
+			{
+				return string("tab_align:") + (b == ALIGN_CENTER ? "center:" : (b == ALIGN_LEFT ? "left:" : "right:"));
+			}
+		} tab_align;
+		
+		struct dir_t {
+			attributes operator = (e_dir b)
+			{
+				return string("dir:") + (b == DIR_H ? "h:" : "v:");
+			}
+		} direction;
+		
+		struct wrap_t {
+			attributes operator = (bool b)
+			{
+				return string("wrap:") + (b ? "true:" : "false:");
+			}
+		} wrap;
+		
+		struct align_t {
+			attributes operator = (e_align b)
+			{
+				return string("align:") + (b == ALIGN_CENTER ? "center:" : (b == ALIGN_LEFT ? "left:" : "right:"));
+			}
+		} align;
+		
+		struct width_t {
+			attributes operator = (string b)
+			{
+				return string("w:") + b + ":";
+			}
+			
+			attributes operator = (unsigned int b)
+			{
+				return string("w:") + to_string(b) + ":";
+			}
+		} width;
+		
+		struct height_t {
+			attributes operator = (string b)
+			{
+				return string("h:") + b + ":";
+			}
+			
+			attributes operator = (unsigned int b)
+			{
+				return string("h:") + to_string(b) + ":";
+			}
+		} height;
+		
+		struct text_t {
+			attributes operator = (string b)
+			{
+				return string("text:") + b + ":";
+			}
+		} text;
+		
+		struct esize_t {
+			attributes operator = (unsigned int b)
+			{
+				return string("size:") + to_string(b) + ":";
+			}
+		} size;
+		
+		struct value_t {
+			attributes operator = (string b)
+			{
+				return string("value:") + b + ":";
+			}
+		} value;
+		
+		struct background_t {
+			attributes operator = (string b)
+			{
+				return string("backcolor:") + b + ":";
+			}
+		} background;
+		
+		struct textcolor_t {
+			attributes operator = (string b)
+			{
+				return string("textcolor:") + b + ":";
+			}
+		} textcolor;
+		
+		struct display_t {
+			attributes operator = (bool b)
+			{
+				return string("display:") + (b ? "true:" : "false:");
+			}
+		} display;
+		
+		struct disabled_t {
+			attributes operator = (bool b)
+			{
+				return string("disabled:") + (b ? "true:" : "false:");
+			}
+		} disabled;
+	}
+}
+
+
+using namespace ui;
+using namespace ui::attr;
+/*
+void button(int a, attributes at)
+{
+	cout << at.buffer << endl;
+}
+
+int main()
+{
+	int direction = 32;
+	button(10, (attr::direction = DIR_H, width = 10));
+}*/
+
+/*#include <iostream>
+#include <string>
+	
+using namespace std;
+*/
+enum element_type : uint8_t {
+	//generic element types compatible with web elements
+	E_HEADER,
+	E_TAB,
+	E_BOX,
+	E_TEXT,
+	E_BUTTON,
+	E_SWITCHER,
+	E_FIELD,
+	E_TIME_FIELD,
+	E_RANGE,
+	E_DIALOG,
+		
+	GET_TIME,
+	FRAME, FRAME_CONFIRMED = FRAME,
+	
+	//custom types only (not compatible with web elements).
+	/*E_SWITCHER,
+	E_RADIO,
+	E_IFIELD,
+	E_TFIELD,*/
+		
+	E_UNKNOWN
+};
+
+//need separate source for this
+struct packet {
+	string buffer;
+	
+	packet& operator + (const packet&);
+	packet& operator + (const string&);
+	
+	//implement these somewhere else
+	void send();
+	void send_all(){};
+	void get(uint32_t sender);
+	
+	packet(string buf = "")
+	{
+		buffer = buf;
+	}
+	
+private:
+	string next_value(size_t &);
+};
+	
+packet& packet::operator + (const packet &b)
+{
+	this->buffer += b.buffer;
+	return *this;
+}
+
+packet& packet::operator + (const string &b)
+{
+	this->buffer += b;
+	return *this;
+}
+
+//root is not an element, it's just a root lfmao
+struct root {};
+
+struct alignas(sizeof(size_t)) element {
+	static size_t first_element_address_in_memory;
+	
+	element_type type;
+
+	void set_offset()
+	{
+		if (first_element_address_in_memory > (size_t)this)
+			first_element_address_in_memory = (size_t)this;
+	}
+
+	template<typename T>
+	string get_id(T *el) {
+		return to_string(((size_t)el - first_element_address_in_memory) / sizeof(size_t));
+	}
+	
+	template<typename T>
+	packet pack(T &parent, attributes att)
+	{
+		return packet("type:") + to_string(this->type) + ":id:" + get_id(this) + ":parent:" + get_id(&parent) + ":" + att.buffer;
+	}
+	
+	packet pack(struct root, attributes att)
+	{
+		return packet("type:") + to_string(this->type) + ":id:" + get_id(this) + ":parent:main:" + att.buffer;
+	}
+	
+	packet pack(attributes att)
+	{
+		return packet("id:") + get_id(this) + ":" + att.buffer;
+	}
+	
+	element()
+	{
+		set_offset();
+	}
+};
+
+struct interactive {
+	union {
+		void (*field)(struct field &id, string value, uint32_t sender);
+		void (*ifield)(struct ifield &id, string value, uint32_t sender);
+		void (*tfield)(struct tfield &id, string value, uint32_t sender);
+		void (*radio)(struct radio &id, string value, uint32_t sender);
+		void (*button)(struct button &id, uint32_t sender);
+		void (*switcher)(struct switcher &id, uint32_t sender);
+		void (*range)(struct range &id, int value, uint32_t sender);
+		
+		void (*time)(time_t t);
+		void (*frame)(uint32_t sender);
+			
+		//void *callback;
+	} callback;
+};
+
+struct interactive_element : element, interactive {
+	static interactive_element* address_from_id(string id)
+	{
+		cout << id << endl;
+		return (interactive_element*)(stoull(id) * sizeof(size_t) + first_element_address_in_memory);
+	}	
+};
+
+size_t element::first_element_address_in_memory = (size_t)-1;
+
+struct tab : element {
+	tab() {type = E_TAB;}
+};
+
+struct text : element {
+	text() {type = E_TEXT;}
+};
+
+struct box : element {
+	box() {type = E_BOX;};
+};
+struct field : interactive_element {};
+struct ifield : interactive_element {};
+struct tfield : interactive_element {};
+struct radio : interactive_element {};
+struct button : interactive_element {};
+struct switcher : interactive_element {
+	bool enabled = false;
+	
+	attributes get()
+	{
+		return enabled ? (attributes(background = "green"), attr::text = "&#10003;") : (attributes(background = "red"), attr::text = "&#10008;");
+	}
+	
+	packet turn()
+	{
+		enabled = !enabled;
+		return packet(get().buffer);
+	}
+	
+	switcher(void (*callback)(struct switcher &id, uint32_t sender))
+	{
+		type = E_SWITCHER;
+		enabled = false;
+		this->callback.switcher = callback;
+	}
+};
+
+struct range : interactive_element {};
+struct time : interactive_element {};
+struct dialog : element {};
+struct frame : interactive_element {};
+
+/*void btn_clb (button &id, uint32_t sender)
+{
+	cout << "callback confirmed!!!" << (size_t)&id << endl;
+	cout << id.pack(id, (attr::text = "noob!")).buffer << endl;
+}
+
+button w[10];*/
+
+string packet::next_value(size_t &begin)
+{
+	size_t old_begin = begin, end = begin;
+	for (; end < buffer.length(); end++)
+		if (buffer[end] == ':' && buffer[end-1] != '\\') break;
+	
+	begin = end+1;
+	return buffer.substr(old_begin, end);
+}
+
+void packet::get(uint32_t sender)
+{
+	size_t begin = 0;
+	string msg;
+	
+	#define NEXT_MSG (msg = next_value(begin))
+	while (NEXT_MSG != "") {
+		interactive_element &e = *interactive_element::address_from_id(msg);
+		switch (e.type) {
+		case E_BUTTON:
+			e.callback.button(static_cast<button&>(e), sender);
+			break;
+			
+		case E_SWITCHER:
+			e.callback.switcher(static_cast<switcher&>(e), sender);
+			break;
+			
+		case E_FIELD:
+		case E_TIME_FIELD:
+			NEXT_MSG;
+			//unescape(msg);
+			e.callback.field(static_cast<field&>(e), msg, sender);
+			break;
+				
+		case E_RANGE:
+			e.callback.range(static_cast<range&>(e), stoi(NEXT_MSG), sender);
+			break;
+			
+		case GET_TIME:
+			e.callback.time(stoi(NEXT_MSG));
+			break;
+			
+		case FRAME_CONFIRMED:
+			e.callback.frame(sender);
+			break;
+			
+		default:
+			NEXT_MSG;
+			break;
+		}
+	}
+}
+
+//Mbahh! <3 ;)
+root root;
+
+struct tab_navigation {
+	tab home;
+	tab settings;
+	tab timers;
+	tab logs;
+	
+	tab *selected = &home; //User specified, does not change its state via websockets
+	
+	packet build()
+	{
+		return	
+			home.pack(root, (panel = "nav", (selected == &home ? attr::selected = true : none), direction = DIR_H, wrap = true, attr::text = "home")) +
+			settings.pack(root, (panel = "nav", (selected == &settings ? attr::selected = true : none), direction = DIR_H, wrap = true, attr::text = "home")) +
+			timers.pack(root, (panel = "nav", (selected == &timers ? attr::selected = true : none), direction = DIR_H, wrap = true, attr::text = "home")) +
+			logs.pack(root, (panel = "nav", (selected == &logs ? attr::selected = true : none), tab_align = ALIGN_RIGHT, direction = DIR_H, wrap = true, attr::text = "home"));
+	}
+} nav_pan;
+
+struct adaptive_mode {
+	static void cbk(switcher &id, uint32_t sender)
+	{
+		id.turn().send_all();
+	}
+
+	box box;
+	switcher switcher;
+	
+	adaptive_mode() : switcher(cbk) {};
+	
+	packet build()
+	{
+		return box.pack(root, (direction = DIR_H, attr::text = "Adaptive mode")) + switcher.pack(box, switcher.get());
+	}
+} am[5];
+
+int main()
+{
+	/*for (int i = 0; i < 10; i++) {
+		w[i].callback.button = &btn_clb;
+		w[i].callback.button(w[i], i);
+	}
+	//cout << w.create(el, (text = "noob!")) << endl;
+	*/
+	packet("17:").get(33);
+	cout << nav_pan.build().buffer << endl;
+	for (int i = 0; i < 5; i++) {
+		cout << am[i].build().buffer << endl;
+	}
 }
