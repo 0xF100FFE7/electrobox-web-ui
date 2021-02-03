@@ -1298,8 +1298,10 @@ enum element_type : uint8_t {
 struct packet {
 	string buffer;
 	
-	packet& operator + (const packet&);
-	packet& operator + (const string&);
+	packet operator + (const packet&);
+	packet& operator += (const packet&);
+	packet operator + (const string&);
+	packet& operator += (const string&);
 	
 	//implement these somewhere else
 	void send();
@@ -1315,13 +1317,23 @@ private:
 	string next_value(size_t &);
 };
 	
-packet& packet::operator + (const packet &b)
+packet packet::operator + (const packet &b)
+{
+	return this->buffer + b.buffer;
+}
+	
+packet& packet::operator += (const packet &b)
 {
 	this->buffer += b.buffer;
 	return *this;
 }
 
-packet& packet::operator + (const string &b)
+packet packet::operator + (const string &b)
+{
+	return this->buffer + b;
+}
+	
+packet& packet::operator += (const string &b)
 {
 	this->buffer += b;
 	return *this;
@@ -1533,7 +1545,9 @@ struct adaptive_mode {
 	
 	packet build()
 	{
-		return box.pack(root, (direction = DIR_H, attr::text = "Adaptive mode")) + switcher.pack(box, switcher.get());
+		packet pck;
+		pck += box.pack(root, (direction = DIR_H, attr::text = "Adaptive mode")) + switcher.pack(box, switcher.get());
+		return pck;
 	}
 } am[5];
 

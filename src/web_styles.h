@@ -20,16 +20,6 @@ body * {
 	font-weight: 600;
 }
 
-.ui_header {
-	padding: 10px;
-	text-align: center;
-	color: #f2f2f2;
-	font-size: 300%;
-	background: linear-gradient(0deg, #666666, #607d8b);
-}
-
-.ui_header:empty { display: none }
-
 /* Style the top navigation bar */
 .ui_tab_panel {
 	border: solid;

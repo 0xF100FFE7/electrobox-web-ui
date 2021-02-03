@@ -11,22 +11,12 @@
 #define DEBUG_MSG(...)
 #endif
 
-//#define SCAN_PERIOD 8000
-//extern long unsigned int last_scan_millis;
-
 namespace ui {
 	namespace network {
 		extern bool sta_connected;
-		extern int avail_networks;
-		extern bool scan;
 		
 		struct settings {
-			static bool need_commit;
-			settings &changed();
-			void committed();
-		
 			bool sta_enabled;
-			
 			char ap_ssid[80];
 			char ap_pass[80];
 			uint32_t ap_ip;
@@ -48,16 +38,11 @@ namespace ui {
 		
 		extern settings settings;
 		
-		extern bool passphrase_is_valid(String);
 		extern void connect_sta();
 		extern void connect_ap();
-		extern void begin();
+		extern void begin(bool sta_enabled);
 		extern void end();
-		extern void begin_scan();
-		extern void end_scan();
-		extern String get_station_name(int i);
 		extern void process_sta();
-		extern void loop();
 	}
 }
 

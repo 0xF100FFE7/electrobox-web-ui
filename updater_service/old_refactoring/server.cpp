@@ -1,11 +1,34 @@
-#include "widgets.h" //server must know about widgets to parse or send them;
 #include "server.h"
 
 namespace ui
 {
+	client clients[8];
+	void web_event(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type, void *arg, uint8_t *data, size_t len)
+	{
+		switch (type) {
+		case WS_EVT_CONNECT:
+			client.connect(client->id());
+			break;
+			
+		case WS_EVT_DISCONNECT:
+			on_disconnect(client->id());
+			break;
+			
+		case WS_EVT_DATA: {
+			messages in;
+			in.buffer.reserve(len + 1);
+			for (size_t i = 0; i < len; i++)
+				in.buffer += (char)data[i];
+			in.parse(client->id());
+			break;
+		}
+		
+		default:
+			break;
+		}
+	}
 	
-	
-	void start_server(const char *username, const char *password)
+	void start_web_server(const char *username, const char *password)
 	{
 		dns_server.setErrorReplyCode(DNSReplyCode::NoError);
 		dns_server.start(53, "*", WiFi.softAPIP());

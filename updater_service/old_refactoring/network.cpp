@@ -1,15 +1,12 @@
 #include "network.h"
 
-//long unsigned int last_scan_millis = 0;
-
 namespace ui {
 	namespace network {
 		bool sta_connected = false;
-		int avail_networks = 0;
-		bool scan = false;
-				
+		struct settings settings;
+		
 		void settings::defaults() {
-			(String("ap_generic") /*+ millis()*/).toCharArray(ap_ssid, 80);
+			(String("ap_") + millis()).toCharArray(ap_ssid, 80);
 			ap_pass[0] = '\0';
 			ap_ip = IPAddress(7, 7, 7, 7);
 			ap_gateway = IPAddress(7, 7, 7, 7);
@@ -25,60 +22,23 @@ namespace ui {
 			
 		void settings::save()
 		{
-			DEBUG_MSG("Saving network settings...\n");
 			File f = LittleFS.open("/network.bin", "w");
-			if (f) {
+			if (f)
 				f.write((uint8_t *)this, sizeof(settings));
-				f.close();
-				
-				committed();
-				
-				DEBUG_MSG("\tSave succeed!\n");
-			} else {
-				DEBUG_MSG("\tSave failed!\n");
-			}
 		}
 			
 		void settings::load()
 		{
-			DEBUG_MSG("Loading network settings...\n");
 			File f = LittleFS.open("/network.bin", "r");
-			if (f) {
+			if (!f)
 				f.read((uint8_t *)this, sizeof(settings));
-				f.close();
-				
-				DEBUG_MSG("\tLoad succeed!\n");
-			} else {
-				DEBUG_MSG("\tLoad failed!\n");
+			else
 				defaults();
-			}
-		}
-		
-		struct settings &settings::changed()
-		{
-			settings::need_commit = true;
-			return *this;
-		}
-
-		void settings::committed()
-		{
-			settings::need_commit = false;
 		}
 		
 		settings::settings()
 		{
 			defaults();
-		}
-		
-		bool settings::need_commit = false;
-		struct settings settings;
-		
-		bool passphrase_is_valid(String val)
-		{
-			if (val.length() && (val.length() > 40 || val.length() < 8))
-				return false;
-			else
-				return true;
 		}
 		
 		void connect_sta()
@@ -97,14 +57,13 @@ namespace ui {
 				WiFi.softAPmacAddress(mac_addr);*/
 		}
 		
-		void begin() //bool sta_enabled
+		void begin(bool sta_enabled)
 		{
-			settings.load();
 			//WiFi.persistent(false);
-			WiFi.mode(settings.sta_enabled ? WIFI_AP_STA : WIFI_AP);
+			WiFi.mode(sta_enabled ? WIFI_AP_STA : WIFI_AP);
 			//WiFi.mode(WIFI_AP);
 			connect_ap();
-			if (settings.sta_enabled)
+			if (sta_enabled)
 				connect_sta();
 		};
 		
@@ -112,32 +71,6 @@ namespace ui {
 		{
 			WiFi.softAPdisconnect();
 			WiFi.disconnect();
-		}
-		
-		void begin_scan()
-		{
-			//last_scan_millis = millis();
-			WiFi.scanNetworks(true);
-			avail_networks = 0;
-			scan = true;
-		}
-		
-		void end_scan()
-		{
-			scan = false;
-		}
-		
-		String get_station_name(int i)
-		{
-			/*String probably_incorrect_output = WiFi.SSID(i);
-			String correct_output;
-			for (int i = 0; i < probably_incorrect_output.length(); i++)
-			{
-				char c = probably_incorrect_output[i];
-				correct_output += isPrintable(c) ? c : '*';
-			}
-			return correct_output;*/
-			return WiFi.SSID(i);
 		}
 		
 		void process_sta()
@@ -150,7 +83,7 @@ namespace ui {
 			static int sta_reconnect_timeout = 60; //repeat reconnect only after 60 seconds 
 			static bool sta_lost_connection = false;
 
-			if (millis() > old_millis + 1000)
+			if (millis() < old_millis + 1000)
 				old_millis += 1000;
 			else
 				return;
@@ -188,13 +121,6 @@ namespace ui {
 			} else {
 				sta_connected = true;
 			}
-		}
-
-		void loop()
-		{	
-			if (scan)
-				avail_networks = WiFi.scanComplete();
-			process_sta();
 		}
 	}
 }

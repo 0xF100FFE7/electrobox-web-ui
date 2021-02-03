@@ -3,18 +3,21 @@ const is_touch = ("ontouchstart" in document.documentElement) ? true : false;
 		
 var websock;
 
-const E_HEADER = 0;
-const E_TAB = 1;
-const E_BOX = 2;
-const E_TEXT = 3;
+const E_TAB = 0;
+const E_BOX = 1;
+const E_TEXT = 2;
+const E_RADIO = 3;
 const E_BUTTON = 4;
-const E_FIELD = 5;
-const E_TIME_FIELD = 6;
-const E_RANGE = 7;
-const E_DIALOG = 8;
-const GET_TIME = 9;
-const FRAME = 10;
-const E_LOADING = 11;
+const E_SWITCHER = 5;
+const E_APPLIER = 6;
+const E_FIELD = 7;
+const E_DATE_FIELD = 8;
+const E_TIME_FIELD = 9;
+const E_RANGE = 10;
+const E_DIALOG = 11;
+const GET_TIME = 12;
+const FRAME = 13;
+const E_LOADING = 14;
 
 //Парсер вхідних повідомлень
 //Повертає ui елемент формату:
@@ -248,15 +251,7 @@ function parse_messages(messages)
 
 		console.log(ui_element);
 		switch(ui_element.type) {
-		case E_HEADER:
-			var header = document.createElement('div');
-			header.id = ui_element.id;
-			header.className = "ui_header";
-			try_insert_web_element(ui_element.parent, header, ui_element.attributes);
-			
-			break;
-		
-		//redesign this horrible shit
+
 		case E_TAB:
 			var selected_tab = ui_element.attributes.selected;
 			var panel = get_web_element(ui_element.attributes.panel);
@@ -340,7 +335,10 @@ function parse_messages(messages)
 			
 			break;
 		
+		case E_RADIO:
 		case E_BUTTON:
+		case E_SWITCHER:
+		case E_APPLIER:
 			var button = document.createElement('button');
 			button.id = ui_element.id;
 			button.className = "ui_button";
@@ -349,13 +347,15 @@ function parse_messages(messages)
 			
 			break;
 
+		case E_DATE_FIELD:
+			var date_field = true;
 		case E_TIME_FIELD:
 			var time_field = true;
 		case E_FIELD:
 			var field = document.createElement('input');
 			field.id = ui_element.id;
 			field.className = "ui_field";
-			field.type = time_field ? "time" : "field";
+			field.type = date_field ? "date" : (time_field ? "time" : "field");
 			field.setAttribute("onfocus", "this.oldval = this.value");
 			field.setAttribute("onchange", "this.force_update = true; try {send_field(this.id, this.value)} finally {this.value = this.oldval}");
 			field.setAttribute("size", "4");

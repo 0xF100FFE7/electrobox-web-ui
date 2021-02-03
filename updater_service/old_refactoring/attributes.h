@@ -23,7 +23,7 @@ namespace ui {
 			ALIGN_CENTER
 		};
 		
-		struct panel_t {attributes operator = (string b);} 		extern panel;
+		struct panel_t {attributes operator = (String b);} 		extern panel;
 		struct selected_t {attributes operator = (bool b);} 		extern selected;
 		struct tab_align_t {attributes operator = (e_align b);}		extern tab_align;
 

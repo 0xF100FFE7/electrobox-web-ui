@@ -8,9 +8,11 @@
 #include <ESPAsyncWebServer.h>
 #include <DNSServer.h>
 
-#include "dataIndexHTML.h"
-#include "dataStyleCSS.h"
-#include "dataMainJS.h"
+#include "web_javascript.h"
+#include "web_styles.h"
+#include "web_page.h"
+
+#include "widgets.h" //server must know about widgets to parse or send them;
 
 #define WS_AUTHENTICATION false
 
@@ -22,6 +24,9 @@ namespace ui {
 	extern DNSServer dns_server;
 	extern AsyncWebServer* server;
 	extern AsyncWebSocket* ws;
+	
+	extern void web_event(AsyncWebSocket *, AsyncWebSocketClient *, AwsEventType, void *, uint8_t *, size_t);
+	extern void start_web_server(const char *, const char *);
 }
 
 #endif

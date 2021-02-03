@@ -31,9 +31,9 @@ namespace ui {
 		display_t	display;
 		disabled_t	disabled;
 		
-		attributes panel_t::operator = (string b) {		return string("panel:") + b + ":";									}
-		attributes selected_t::operator = (bool b) {		return string("selected:") + (b ? "true:" : "false:");							}
-		attributes tab_align_t::operator = (e_align b) {	return string("tab_align:") + (b == ALIGN_CENTER ? "center:" : (b == ALIGN_LEFT ? "left:" : "right:"));	}
+		attributes panel_t::operator = (String b) {		return String("panel:") + b + ":";									}
+		attributes selected_t::operator = (bool b) {		return String("selected:") + (b ? "true:" : "false:");							}
+		attributes tab_align_t::operator = (e_align b) {	return String("tab_align:") + (b == ALIGN_CENTER ? "center:" : (b == ALIGN_LEFT ? "left:" : "right:"));	}
 		attributes dir_t::operator = (e_dir b) {		return String("dir:") + (b == DIR_H ? "h:" : "v:");							}
 		attributes wrap_t::operator = (bool b) {		return String("wrap:") + (b ? "true:" : "false:");							}
 		attributes align_t::operator = (e_align b) {		return String("align:") + (b == ALIGN_CENTER ? "center:" : (b == ALIGN_LEFT ? "left:" : "right:"));	}		
