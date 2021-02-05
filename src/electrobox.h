@@ -45,6 +45,17 @@ enum language_item {
 	AP_SSID = 54,
 	AP_PASS = 55,
 	AP_IP = 56,
+	STA_ENABLED = 57,
+	STA_CONNECTION_STATUS = 58,
+	STA_AVAIL_NETWORKS = 59,
+	STA_SCAN_NETWORK = 60,
+	
+	STA_STATUS = 61,
+	STA_DISCONNECTED = 61,
+	STA_CONNECTED = 62,
+	STA_CONNECTING = 63,
+	STA_TIMEOUT = 64,
+	
 	STATS_TITLE = 65,
 	STATS_PREV_TITLE = 66,
 	STATS_CUR_TITLE = 67,
@@ -123,7 +134,7 @@ struct settings {
 	int display_off_time;
 	int display_brightness;
 	
-	void defaults();
+	struct settings &defaults();
 	void save();		
 	void load();
 	

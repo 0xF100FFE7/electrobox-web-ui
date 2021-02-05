@@ -4,23 +4,25 @@
 
 namespace ui {
 	namespace network {
-		bool sta_connected = false;
+		enum sta_status sta_status = STA_DISCONNECTED;
 		int avail_networks = 0;
 		bool scan = false;
 				
-		void settings::defaults() {
+		struct settings &settings::defaults() {
 			(String("ap_generic") /*+ millis()*/).toCharArray(ap_ssid, 80);
 			ap_pass[0] = '\0';
 			ap_ip = IPAddress(7, 7, 7, 7);
 			ap_gateway = IPAddress(7, 7, 7, 7);
 			ap_subnet = IPAddress(255, 255, 255, 0);
 			
-			sta_enabled = false;
-			sta_ssid[0] = '\0';
+			dhcp_enabled = false;
+			(String("soni2") /*+ millis()*/).toCharArray(sta_ssid, 80);
 			sta_pass[0] = '\0';
 			sta_ip = IPAddress(192, 168, 1, 227);
 			sta_gateway = IPAddress(192, 168, 1, 1);
 			sta_subnet = IPAddress(255, 255, 255, 0);
+			
+			return *this;
 		}
 			
 		void settings::save()
@@ -83,9 +85,11 @@ namespace ui {
 		
 		void connect_sta()
 		{
+			sta_status = STA_BEGIN_CONNECTION;
 			/*if (is_valid_mac(mac_addr))
 				wifi_set_macaddr(SOFTAP_IF, &mac_addr[0]);*/
-			WiFi.config(settings.sta_ip, settings.sta_gateway, settings.sta_subnet);
+			if (!settings.dhcp_enabled)
+				WiFi.config(settings.sta_ip, settings.sta_gateway, settings.sta_subnet);
 			WiFi.begin(settings.sta_ssid, settings.sta_pass);
 		}
 		
@@ -101,10 +105,10 @@ namespace ui {
 		{
 			settings.load();
 			//WiFi.persistent(false);
-			WiFi.mode(settings.sta_enabled ? WIFI_AP_STA : WIFI_AP);
+			WiFi.mode(settings.sta_ssid[0] ? WIFI_AP_STA : WIFI_AP);
 			//WiFi.mode(WIFI_AP);
 			connect_ap();
-			if (settings.sta_enabled)
+			if (settings.sta_ssid[0])
 				connect_sta();
 		};
 		
@@ -129,67 +133,129 @@ namespace ui {
 		
 		String get_station_name(int i)
 		{
-			/*String probably_incorrect_output = WiFi.SSID(i);
+			String probably_incorrect_output = i > 0 ? WiFi.SSID(i) : String(settings.sta_ssid);
 			String correct_output;
 			for (int i = 0; i < probably_incorrect_output.length(); i++)
 			{
 				char c = probably_incorrect_output[i];
 				correct_output += isPrintable(c) ? c : '*';
 			}
-			return correct_output;*/
-			return WiFi.SSID(i);
+			return correct_output;
+			//return WiFi.SSID(i);
 		}
+		
+		//String correct_station_ssid
+		
+		/*String get_station_mac(int i)
+		{
+			return WiFi.BSSIDstr(i);
+		}*/
+		
+		/*String get_connected_station_name()
+		{
+			//return WiFi.SSID();
+			return String(settings.sta_ssid);
+		}*/
+		
+		/*String get_connected_station_mac()
+		{
+			return WiFi.BSSIDstr();
+		}*/
+		
+		bool change_sta_to(int i, String passwd)
+		{
+			if (avail_networks < i || i < 0)
+				return false; //invalid station
+				
+			WiFi.SSID(i).toCharArray(settings.changed().sta_ssid, 80);
+			(passphrase_is_valid(passwd) ? passwd : "").toCharArray(settings.changed().sta_pass, 80);
+			settings.save();
+			end();
+			DEBUG_MSG("Network settings applied, restarting...\n");
+			delay(1000);
+			ESP.restart();
+			return true;
+			//connect_sta();
+		}
+		
+		/*void disconnect_sta()
+		{
+			sta_status = STA_DISCONNECTED;
+			WiFi.disconnect();
+		}*/
 		
 		void process_sta()
 		{
 			static unsigned long old_millis = 0;
-
-			static int sta_connection_attempts = 5; //maximum 5 seconds to connect to sta, then stop.
-			static bool sta_connecting = true;
-			
-			static int sta_reconnect_timeout = 60; //repeat reconnect only after 60 seconds 
-			static bool sta_lost_connection = false;
 
 			if (millis() > old_millis + 1000)
 				old_millis += 1000;
 			else
 				return;
 
-			if (WiFi.getMode() == WIFI_AP_STA) {
-				if (!sta_lost_connection) {
-					if (WiFi.status() != WL_CONNECTED && sta_connecting) {
-						if (sta_connection_attempts <= 0) { //if we can't connect then sta is lost connection
-							DEBUG_MSG("Connection to sta is lost\n", sta_connection_attempts);
-							WiFi.persistent(false);
-							WiFi.disconnect(); //quit ESP sta reconnect limbo
-							WiFi.persistent(true);
-							sta_connection_attempts = 5;
-							sta_reconnect_timeout = 60;
-							sta_connected = false;
-							sta_lost_connection = true;
-							sta_connecting = false;
-						} else {
-							DEBUG_MSG("Connecting to sta (%i)...\n", sta_connection_attempts);
-							sta_connection_attempts--;
-						}
-					}
-				} else { //if we lost connection then wait timeout, and then try connect again
-					if (sta_reconnect_timeout <= 0) {
-						DEBUG_MSG("Sta been disconnected too long, reconnecting...\n");
-						sta_connecting = true;
-						sta_lost_connection = false; //connection is not lost if we're connecting
-						WiFi.begin();
-					} else {
-						if (!(sta_reconnect_timeout % 10))
-							DEBUG_MSG("Timeout to reconnect sta: %i...\n", sta_reconnect_timeout--);
-						sta_reconnect_timeout--;
-					}
+			//TODO less complex automaton
+			switch (sta_status) {
+			case STA_BEGIN_CONNECTION:
+				sta_status = STA_ATTEMPT_TO_CONNECT;
+				WiFi.begin();
+				break;
+				
+			case STA_ATTEMPT_TO_CONNECT:
+				static int attempts = 5;
+				
+				if (WiFi.status() == WL_CONNECTED) {
+					DEBUG_MSG("Connected to sta: %s (%s)\n", WiFi.SSID().c_str(), WiFi.localIP().toString().c_str());
+					sta_status = STA_CONNECTED;
+					attempts = 5;
+					break;
 				}
-			} else {
-				sta_connected = true;
+
+				if (attempts > 0) {
+					DEBUG_MSG("Connecting to %s (%s) (%i)...\n", WiFi.SSID().c_str(), WiFi.localIP().toString().c_str(), attempts);
+					attempts--;
+				} else {
+					DEBUG_MSG("Can't connect to sta\n");
+					sta_status = STA_LOST_CONNECTION;
+					attempts = 5;
+				}
+				
+				break;
+				
+			case STA_CONNECTED:
+				if (WiFi.status() != WL_CONNECTED) {
+					DEBUG_MSG("Connection to sta is lost\n");
+					sta_status = STA_LOST_CONNECTION;
+					break;
+				}
+				break;
+				
+			case STA_LOST_CONNECTION:
+				WiFi.persistent(false);
+				WiFi.disconnect(); //quit ESP sta reconnect limbo
+				WiFi.persistent(true);
+				sta_status = STA_TIMEOUT_TO_RECONNECT;
+				break;
+				
+			case STA_TIMEOUT_TO_RECONNECT:
+				static int timeout = 60;
+				
+				if (timeout > 0) {
+					if (!(timeout % 10))
+						DEBUG_MSG("Timeout to reconnect sta: %i...\n", timeout--);
+					timeout--;
+				} else {
+					DEBUG_MSG("Sta been disconnected too long, reconnecting...\n");
+					sta_status = STA_BEGIN_CONNECTION;
+					timeout = 60;
+				}
+				
+				break;
+			
+			case STA_DISCONNECTED:
+				break;
 			}
 		}
-
+		
 		void loop()
 		{	
 			if (scan)

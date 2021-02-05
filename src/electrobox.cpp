@@ -10,6 +10,7 @@ extern struct sync_time sync_time;
 extern struct language_selector language_selector;
 extern struct factory_reset factory_reset;
 extern struct network_settings network_settings;
+extern struct sta_settings sta_settings;
 void rebuild_electrobox_ui();
 
 
@@ -18,7 +19,7 @@ void rebuild_electrobox_ui();
 //////////////////////////////////////////////////////////////////////////////////
 /*				SETTINGS SECTION				*/
 //////////////////////////////////////////////////////////////////////////////////
-void settings::defaults() {
+struct settings &settings::defaults() {
 	version = 75;
 		
 	language = LANG_UA;
@@ -37,6 +38,8 @@ void settings::defaults() {
 	display_off_enabled = false;
 	display_off_time = 10;
 	display_brightness = 100;
+	
+	return *this;
 }
 
 void settings::save()
@@ -96,9 +99,9 @@ struct settings settings;
 /*				LANGUAGE SECTION				*/
 //////////////////////////////////////////////////////////////////////////////////
 const char* languages[NUMBER_OF_SUPPORTED_LANGUAGES][LANGUAGE_ITEMS] PROGMEM = {
-	{"Головна", "Налаштування", "Вибір мови", "Українська", "Встановити дату та час", "Рік", "Години", "Місяць", "Хвилини", "День", "Секунди", "Тижневий розклад", "Дні тижня", "Старт зарядки", "Стоп зарядки", "Увімкнути", "Понеділок", "Вівторок", "Середа", "Четвер", "П'ятниця", "Субота", "Неділя", "Статус зарядки", "Пістолет не вставлено", "Триває зарядка", "Автомобіль заряджено", "Перевірте заземлення", "Спрацював захист ПЗВ", "Спрацював захист по напрузі (більше 270V)", "Спрацював захист по току (більше 50А)", "Очікує зарядки по розкладу", "кВт", "Час та кВт за сесію", "Напруга, струм та потужність", "Регулювання струму", "Перевірка заземлення", "Заряджати по розкладу", "Адаптивний режим", "Обмежити кількість кВт за сесію", "Таймери", "Регулювання яскравості дисплею", "Обмежити тривалість заряду в годинах", "Час до вимкнення дисплею в хвилинах", "Статистика", "Лог змін статусу", "Ввімкнути зарядку", "Синхронізувати час з браузерним", "Очистка логу", "Скинути налаштування", "Налаштування мережі", "Зберегти зміни", "Точка доступу", "Станція", "SSID\\:", "Пароль\\:", "IP адрес\\:", "Шлюз\\:", "Маска підмережі\\:", "Ввімкнена\\:", "SSID\\:", "Пароль\\:", "Статичний IP адрес\\:", "Шлюз\\:", "Маска підмережі\\:", "Статистика за період", "За минулу(ий)", "За теперішню(ній)", "Годину\\:", "День\\:", "Тиждень\\:", "Місяць\\:", "Рік\\:", "За весь час\\:", "Рахувати з теперешнього моменту", "Споживано за сесію", "Зараз", "При підключенні\\:", "Ви дійсно хочете скинути налаштування?", "Так", "Ні"},
-	{"Главная", "Настройки", "Выбор языка", "Русский", "Установить дату и время", "Год", "Часы", "Месяц", "Минуты", "День", "Секунды", "Еженедельное расписание", "Дни недели", "Старт заряда", "Стоп зарада", "Включить", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье", "Статус зарядки", "Пистолет не вставлен", "Продолжается зарядка", "Автомобиль заряжен", "Проверьте заземление", "Сработала защита УЗО", "Сработала защита по напряжению (более 270V)", "Сработала защита по току (более 50A)", "Ожидание зарядки по расписанию", "кВт", "Время и кВт за сессию", "Напряжение ток и мощность", "Регулировка тока", "Проверка заземления", "Заряжать по расписанию", "Адаптивний режим", "Ограничить кол-во кВт за сессию", "Таймеры", "Регулировка яркости дисплея", "Ограничить время заряда в часах", "Время до отключения дисплея в минутах", "Статистика", "Лог смен статуса", "Включить зарядку", "Синхронизировать время с браузерным", "Очистить лог", "Сбросить настройки", "Настройки сети", "Сохраниить изменения", "Точка доступа", "Станция", "SSID\\:", "Пароль\\:", "IP адрес\\:", "Шлюз\\:", "Маска подсети\\:", "Включена\\:", "SSID\\:", "Пароль\\:", "Статический IP адрес\\:", "Шлюз\\:", "Маска подсети\\:", "Статистика за период", "За предыдущий(ую))", "За Текущий(ую)", "Час\\:", "День\\:", "Неделю\\:", "Месяц\\:", "Год\\:", "За всё время\\:", "Считать с текущего момента", "Употреблено за сессию", "Сейчас", "При подключении\\:", "Вы действительно хотите сбросить настройки?", "Да", "Нет"},
-	{"Home", "Settings", "Select language", "English", "Setup date and time", "Year", "Hours", "Month", "Minutes", "Day", "Seconds", "Weekly sсhedule", "Days of the week", "Start charging", "Stop charging", "Enable", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday", "Charger status", "Pistol not inserted", "Charging continues", "Vehicle is charged", "Check ground", "RCD protection blocking", "Voltage protection blocking (above 270V)", "Current protection blocking (above 50A)", "Waiting for charging by chedule", "kWt", "Time and kWt for session", "Voltage, current and kWt", "Current regulator", "Ground check", "Charge by schedule", "Adaptive mode", "Limit kWt for session", "Timers", "Display brightness regulator", "Limit charge time by hours", "Time to turn off the display in minutes", "Statistics", "Status change log", "Enable charger", "Synchronize time with browser time", "Clear log", "Factory reset", "Network settings", "Save settings", "Access point", "Station", "SSID\\:", "Password\\:", "IP\\:", "Gate\\:", "Subnet mask\\:", "Enabled\\:", "SSID\\:", "Password\\:", "Static ip\\:", "Gate\\:", "Subnet mask\\:", "Statistics for a period", "Previous", "Current", "Hour\\:", "Day\\:", "Week\\:", "Month\\:", "Year\\:", "For all time\\:", "Count from current time", "Consumed for session", "Now", "On connect\\:", "Do you really want to reset?", "Yes", "No"},
+	{"Головна", "Налаштування", "Вибір мови", "Українська", "Встановити дату та час", "Рік", "Години", "Місяць", "Хвилини", "День", "Секунди", "Тижневий розклад", "Дні тижня", "Старт зарядки", "Стоп зарядки", "Увімкнути", "Понеділок", "Вівторок", "Середа", "Четвер", "П'ятниця", "Субота", "Неділя", "Статус зарядки", "Пістолет не вставлено", "Триває зарядка", "Автомобіль заряджено", "Перевірте заземлення", "Спрацював захист ПЗВ", "Спрацював захист по напрузі (більше 270V)", "Спрацював захист по току (більше 50А)", "Очікує зарядки по розкладу", "кВт", "Час та кВт за сесію", "Напруга, струм та потужність", "Регулювання струму", "Перевірка заземлення", "Заряджати по розкладу", "Адаптивний режим", "Обмежити кількість кВт за сесію", "Таймери", "Регулювання яскравості дисплею", "Обмежити тривалість заряду в годинах", "Час до вимкнення дисплею в хвилинах", "Статистика", "Лог змін статусу", "Ввімкнути зарядку", "Синхронізувати час з браузерним", "Очистка логу", "Скинути налаштування", "Налаштування мережі", "Зберегти зміни", "Точка доступу", "Станція", "SSID\\:", "Пароль\\:", "IP адрес\\:", "Cтанція ввімкнена\\:", "Статус підключення\\:", "Доступні мережі\\:", "Сканувати мережу", "Підключення відсутнє", "Підключено до\\: ", "Спроба підключення до\\: ", "Неможливо підключитися до\\: ", "Статистика за період", "За минулу(ий)", "За теперішню(ній)", "Годину\\:", "День\\:", "Тиждень\\:", "Місяць\\:", "Рік\\:", "За весь час\\:", "Рахувати з теперешнього моменту", "Споживано за сесію", "Зараз", "При підключенні\\:", "Ви дійсно хочете скинути налаштування?", "Так", "Ні"},
+	{"Главная", "Настройки", "Выбор языка", "Русский", "Установить дату и время", "Год", "Часы", "Месяц", "Минуты", "День", "Секунды", "Еженедельное расписание", "Дни недели", "Старт заряда", "Стоп зарада", "Включить", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье", "Статус зарядки", "Пистолет не вставлен", "Продолжается зарядка", "Автомобиль заряжен", "Проверьте заземление", "Сработала защита УЗО", "Сработала защита по напряжению (более 270V)", "Сработала защита по току (более 50A)", "Ожидание зарядки по расписанию", "кВт", "Время и кВт за сессию", "Напряжение ток и мощность", "Регулировка тока", "Проверка заземления", "Заряжать по расписанию", "Адаптивний режим", "Ограничить кол-во кВт за сессию", "Таймеры", "Регулировка яркости дисплея", "Ограничить время заряда в часах", "Время до отключения дисплея в минутах", "Статистика", "Лог смен статуса", "Включить зарядку", "Синхронизировать время с браузерным", "Очистить лог", "Сбросить настройки", "Настройки сети", "Сохраниить изменения", "Точка доступа", "Станция", "SSID\\:", "Пароль\\:", "IP адрес\\:", "Станция включена\\:", "Статус подключения\\:", "Доступные сети\\:", "Сканировать сети", "Подключение отсутствует", "Подключено к\\: ", "Попытка подключения к\\: ", "Невозможно подключиться к\\: ", "Статистика за период", "За предыдущий(ую))", "За Текущий(ую)", "Час\\:", "День\\:", "Неделю\\:", "Месяц\\:", "Год\\:", "За всё время\\:", "Считать с текущего момента", "Употреблено за сессию", "Сейчас", "При подключении\\:", "Вы действительно хотите сбросить настройки?", "Да", "Нет"},
+	{"Home", "Settings", "Select language", "English", "Setup date and time", "Year", "Hours", "Month", "Minutes", "Day", "Seconds", "Weekly sсhedule", "Days of the week", "Start charging", "Stop charging", "Enable", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday", "Charger status", "Pistol not inserted", "Charging continues", "Vehicle is charged", "Check ground", "RCD protection blocking", "Voltage protection blocking (above 270V)", "Current protection blocking (above 50A)", "Waiting for charging by chedule", "kWt", "Time and kWt for session", "Voltage, current and kWt", "Current regulator", "Ground check", "Charge by schedule", "Adaptive mode", "Limit kWt for session", "Timers", "Display brightness regulator", "Limit charge time by hours", "Time to turn off the display in minutes", "Statistics", "Status change log", "Enable charger", "Synchronize time with browser time", "Clear log", "Factory reset", "Network settings", "Save settings", "Access point", "Station", "SSID\\:", "Password\\:", "IP\\:", "Station enabled\\:", "Connection status\\:", "Available networks\\:", "Scan networks", "No connection", "Connected to\\: ", "Attempting to connect to\\: ", "Failed to connect to\\: ", "Statistics for a period", "Previous", "Current", "Hour\\:", "Day\\:", "Week\\:", "Month\\:", "Year\\:", "For all time\\:", "Count from current time", "Consumed for session", "Now", "On connect\\:", "Do you really want to reset?", "Yes", "No"},
 };
 
 //Localized string
@@ -430,7 +433,8 @@ struct factory_reset {
 	static void yes_callback(struct button &id, uint32_t sender)
 	{
 		::factory_reset.dialog.pack(attr::display = false).send(sender);
-		//TODO: factory_init(true); //set reset
+		network::settings.defaults().save();
+		settings.defaults().save();
 		
 		//tab_navigation::selected = &tab_navigation::settings;
 		rebuild_electrobox_ui();
@@ -527,49 +531,92 @@ struct ap_settings {
 } ap_settings;
 
 struct sta_settings {
-	struct switcher sta_enabled;
-	struct box connection_status;
+	enum network::sta_status old_status;
+	
+	/*struct box sta_enabled_wrapper;
+	struct text sta_enabled_text;
+	struct switcher sta_enabled;*/
+	struct box connection_status_wrapper;
+	struct text connection_status;
 	struct box avail_stations_wrapper;
-	struct box scan_wrapper;
 	struct applier scan_sta;
 	
-	struct avail_stations : button {
-		 static void select_station_callback(struct button &id, uint32_t sender)
-		 {
-		 }
+	struct avail_stations : radio {
+		static void select_station_callback(struct radio &id, uint32_t sender)
+		{
+			int idx = (&id - static_cast<radio*>(&::sta_settings.avail_stations[0]));
+			if (idx != 0) {
+				network::change_sta_to(idx - 1, "0987w456321s");
+				::sta_settings.list_avail_stations().send_all();
+			}
+		}
 		 
-		 avail_stations() : button(select_station_callback) {}
-	} avail_stations[MAX_STATIONS_SHOWN_AT_ONCE]; //Not very dynamic way to do it, but OK yet. TODO
+		 avail_stations() : radio(select_station_callback) {}
+	} avail_stations[MAX_STATIONS_SHOWN_AT_ONCE]/*, *selected_sta = &avail_stations[0]*/; //Not very dynamic way to do it, but OK yet. TODO
+
+	/*String status_str()
+	{
+		switch (network::sta_status) {
+		case network::STA_DISCONNECTED:
+			return l_str(STA_DISCONNECTED);
+		
+		default:
+			return l_str(STA_STATUS + network::sta_status) + network::get_station_name(-1);
+		*//*case network::STA_CONNECTED:
+			return l_str(STA_CONNECTED) + network::get_station_name(i);
+		
+		case network::STA_CONNECTING:
+			return l_str(STA_CONNECTING)
+		
+		case network::STA_TIMEOUT:
+			return l_str(STA_TIMEOUT)*/
+	/*	}
+	}*/
 
 	packet list_avail_stations()
 	{
 		packet buf;
-		for (int i = 0; i < network::avail_networks; i++)
+		if (network::sta_status != STA_DISCONNECTED)
+			avail_stations[0].pack(network_settings.sta_tab, (attr::text = network::get_station_name(-1), attr::display = true, attr::background = "green")); //zero slot is reserved for connected station
+		
+		for (int i = 1; i < network::avail_networks + 1; i++) {
+			if ((network::sta_status != STA_DISCONNECTED) && (network::get_station_name(-1) == network::get_station_name(i)))
+				continue; //skip same station as from zero slot;
 			buf += avail_stations[i].pack(network_settings.sta_tab, (attr::text = network::get_station_name(i), attr::display = true));
-		for (int i = network::avail_networks; i < MAX_STATIONS_SHOWN_AT_ONCE; i++)
+		}
+		
+		//do not display entries further
+		for (int i = network::avail_networks + 1; i < MAX_STATIONS_SHOWN_AT_ONCE; i++)
 			buf += avail_stations[i].pack(network_settings.sta_tab, (attr::display = false));
+		
 		return buf;
 	}
 	
-	static void sta_enabled_callback(struct switcher &id, uint32_t sender)
+	/*static void sta_enabled_callback(struct switcher &id, uint32_t sender)
 	{
-		id.turn(network::settings.changed().sta_enabled).send_all();
-	}
+		id.turn(network::settings.changed().sta_enabled).send_all(); //TODO deferred changing
+	}*/
 	
 	static void scan_sta_callback(struct applier &id, uint32_t sender)
 	{
-		//::network_settings.clean_avail_stations().send_all();
+		packet buf = id.turn(false);
+		for (int i = 0; i < MAX_STATIONS_SHOWN_AT_ONCE; i++)
+			buf += ::sta_settings.avail_stations[i].pack(network_settings.sta_tab, (attr::display = false));
+		buf.send_all();
 		network::begin_scan();
 	}
 	
-	sta_settings() : scan_sta(scan_sta_callback), sta_enabled(sta_enabled_callback) {}
+	sta_settings() : scan_sta(scan_sta_callback), /*sta_enabled(sta_enabled_callback),*/ old_status(network::STA_DISCONNECTED) {}
 	packet build()
 	{
 		return
-		sta_enabled.pack(network_settings.sta_tab, (sta_enabled.get(network::settings.sta_enabled))) +
+		/*sta_enabled_wrapper.pack(network_settings.sta_tab, (attr::direction = DIR_H)) +
+		sta_enabled_text.pack(sta_enabled_wrapper, (attr::text = l_str(STA_ENABLED), attr::width = "content")) + sta_enabled.pack(sta_enabled_wrapper, (sta_enabled.get(network::settings.sta_enabled))) +*/
+		/*connection_status_wrapper.pack(network_settings.sta_tab) + connection_status_wrapper.pack((attr::text = l_str(STA_CONNECTION_STATUS), attr::height = 10)) + //lil hack, TODO (put something else here) //TODO margin attribute
+		connection_status.pack(connection_status_wrapper, (attr::text = status_str(), attr::wrap = true, attr::height = "content")) +*/
+		avail_stations_wrapper.pack(network_settings.sta_tab) + avail_stations_wrapper.pack(attr::text = l_str(STA_AVAIL_NETWORKS)) + //lil hack, TODO (put something else here)
 		list_avail_stations() +
-		scan_sta.pack(network_settings.sta_tab, (attr::text = "Refresh list", attributes(scan_sta.turn(true).buffer)));
-
+		scan_sta.pack(network_settings.sta_tab, (attr::text = l_str(STA_SCAN_NETWORK), attr::background = "cornflowerblue", attributes(scan_sta.turn(true).buffer))); //TODO better applier setter
 	}
 } sta_settings;
 
@@ -631,6 +678,8 @@ void electrobox_loop()
 	static unsigned long old_millis = 0;
 	static unsigned time_counter = 0;
 	if (millis() > old_millis + 1000) {
+		packet buf;
+		
 		if (time_counter >= 60) {
 			date_time.update();
 			time_counter = 0;
@@ -640,22 +689,35 @@ void electrobox_loop()
 		
 		if (settings.need_commit) {
 			if (!factory_reset.applier.avail)
-				factory_reset.applier.turn(true).send_all();
+				buf += factory_reset.applier.turn(true);
 			settings.save();
 		}
 		
 		//don't mess network_settings with network::settings - they are different
 		if (network::settings.need_commit) {
 			if (!network_settings.apply_settings.avail)
-				network_settings.apply_settings.turn(true).send_all();
+				buf += network_settings.apply_settings.turn(true);
 			//do not save settings here, better do this inside applier.
 		}
 		
+		/*if (network::sta_status != sta_settings.old_status) { //if network status changed
+			sta_settings.old_status = network::sta_status;
+			
+			DEBUG_MSG("Status = %i\n", network::sta_status);
+			//search network inside available networks list
+			//sta_settings.search();
+			
+			//buf += sta_settings.connection_status.pack(attr::text = sta_settings.status_str());
+		}*/
+		
 		if (network::scan && network::avail_networks > 0)
 		{
-			sta_settings.list_avail_stations().send_all();
+			buf += sta_settings.scan_sta.turn(true) + sta_settings.list_avail_stations();
 			network::end_scan();
 		}
+		
+		if (buf.buffer)
+			buf.send_all();
 		
 		old_millis += 1000;
 	}

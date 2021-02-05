@@ -149,9 +149,14 @@ namespace ui {
 			return String(((size_t)el - first_element_address_in_memory) / sizeof(size_t));
 		}
 		
+		template<typename T> packet pack(T &parent)
+		{
+			return packet("type:") + String(this->type) + ":id:" + get_id(this) + ":parent:" + get_id(&parent) + ":";
+		}
+		
 		template<typename T> packet pack(T &parent, attributes att)
 		{
-			return packet("type:") + String(this->type) + ":id:" + get_id(this) + ":parent:" + get_id(&parent) + ":" + att.buffer;
+			return pack(parent) + att.buffer;
 		}
 
 		packet pack(struct root, attributes att);

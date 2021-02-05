@@ -16,6 +16,15 @@
 
 namespace ui {
 	namespace network {
+		enum sta_status {
+			STA_BEGIN_CONNECTION,
+			STA_ATTEMPT_TO_CONNECT,
+			STA_CONNECTED,
+			STA_LOST_CONNECTION,
+			STA_TIMEOUT_TO_RECONNECT,
+			STA_DISCONNECTED,
+		} extern sta_status;
+		
 		extern bool sta_connected;
 		extern int avail_networks;
 		extern bool scan;
@@ -25,7 +34,7 @@ namespace ui {
 			settings &changed();
 			void committed();
 		
-			bool sta_enabled;
+			bool dhcp_enabled;
 			
 			char ap_ssid[80];
 			char ap_pass[80];
@@ -39,7 +48,7 @@ namespace ui {
 			uint32_t sta_gateway;
 			uint32_t sta_subnet;
 			
-			void defaults();
+			struct settings &defaults();
 			void save();		
 			void load();
 			
@@ -56,6 +65,10 @@ namespace ui {
 		extern void begin_scan();
 		extern void end_scan();
 		extern String get_station_name(int i);
+		//extern String get_station_mac(int i);
+		extern bool change_sta_to(int i, String passwd);
+		//extern String get_connected_station_name();
+		//extern String get_connected_station_mac();
 		extern void process_sta();
 		extern void loop();
 	}
